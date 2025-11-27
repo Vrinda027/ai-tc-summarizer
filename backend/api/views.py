@@ -19,16 +19,22 @@ class SummarizeView(APIView):
             model = genai.GenerativeModel("models/gemini-flash-latest")
 
 
-            response=model.generate_content(f"""
-Summarize the following Terms & Conditions into **short, simple bullet points**.
-- Keep each bullet **under 20 words**.
-- Focus on the **main points users need to know**.
-- Avoid legal jargon, make it easy to read.
-- Keep all sections like agreements, modifications, age, and intellectual property.
+            response = model.generate_content(f"""
+Summarize the following Terms and Conditions for a non-legal reader.
+- Include **only the 6 most essential points**.
+- Use **short, 1-line sentences** per point.
+- Format as **HTML**:
+    - Bold only the "⚠️ Risk:" label: <b>⚠️ Risk:</b>
+    - Keep other icons normal: ℹ️ Info:, ✅ Allowed:
+    - Each point should be on a **new line** using <br> at the end
+- Do not use <ul>, <li>, or Markdown (*)
+- Headings optional: <h3>...</h3>
+- Keep it concise, readable, and actionable.
+
 Text:
 {text}
-"""
-)
+""")
+
 
             summary=response.text
             return Response({"summary":summary})
